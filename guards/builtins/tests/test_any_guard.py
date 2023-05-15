@@ -44,6 +44,15 @@ class TestAnyGuard:
 
         assert any_guard_instance.permitted
 
+    def test_permitted_on_rerun_if_all_closed(self):
+        self.guard_1.test_next_closed = True
+
+        any_guard_instance = any_guard(lambda: self.guard_1)()
+        any_guard_instance.run(RUN_EVENT)
+        any_guard_instance.run(RUN_EVENT)
+
+        assert any_guard_instance.permitted
+
     def test_not_permitted_if_none_permitted(self):
         self.guard_1.permitted = False
         self.guard_1.test_next_closed = True

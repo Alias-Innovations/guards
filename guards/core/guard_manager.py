@@ -9,6 +9,11 @@ class GuardManager:
     def __init__(self):
         self.guards: list[Guard] = []
         self.listeners: dict[Any, list[Guard]] = {}
+        self.__running = False
+
+    @property
+    def running(self):
+        return self.__running
 
     def add(self, guard: Guard):
         guard_collections = [self.guards]
@@ -36,15 +41,19 @@ class GuardManager:
             raise GuardException(guard.get_effective_guard())
 
     def run(self, event: Any = RUN_EVENT, *args, **kwargs):
-        closed_guards = []
-        guards = self.listeners.get(event, [])
-        for guard in guards:
-            self.__run_guard(guard, event, *args, **kwargs)
-            if guard.closed:
-                closed_guards.append(guard)
+        self.__running = True
+        try:
+            closed_guards = []
+            guards = self.listeners.get(event, [])
+            for guard in guards:
+                self.__run_guard(guard, event, *args, **kwargs)
+                if guard.closed:
+                    closed_guards.append(guard)
 
-        for closed_guard in closed_guards:
-            guards.remove(closed_guard)
+            for closed_guard in closed_guards:
+                guards.remove(closed_guard)
+        finally:
+            self.__running = False
 
     def check(self):
         # Throw error for open guards as well when closing
