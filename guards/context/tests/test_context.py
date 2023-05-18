@@ -16,6 +16,11 @@ def build_fake_guard_manager():
         test_adds = []
         test_runs = []
         test_closed = False
+        test_running = False
+
+        @property
+        def running(self):
+            return FakeGuardManager.test_running
 
         def add(self, guard):
             FakeGuardManager.test_adds.append(guard)
@@ -57,6 +62,13 @@ class TestGuardContext:
 
         assert len(self.FakeGuardManager.test_runs) == 1
         assert self.FakeGuardManager.test_runs[0] == RUN_EVENT
+
+    def test_running_is_called_over(self):
+        self.FakeGuardManager.test_running = False
+        assert not self.context.running
+
+        self.FakeGuardManager.test_running = True
+        assert self.context.running
 
     def test_emit_calls_run(self):
         self.context.emit(GuardEventKey(TEST_EVENT))

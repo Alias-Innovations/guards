@@ -44,6 +44,15 @@ class TestAllGuards:
 
         assert not all_guards_instance.permitted
 
+    def test_not_permitted_on_rerun_after_closed(self):
+        self.guard_1.permitted = False
+        self.guard_1.test_next_closed = True
+        all_guards_instance = all_guards(lambda: self.guard_1)()
+        all_guards_instance.run(RUN_EVENT)
+        all_guards_instance.run(RUN_EVENT)
+
+        assert not all_guards_instance.permitted
+
     def test_permitted_if_all_permitted(self):
         self.guard_2.permitted = True
         all_guards_instance = all_guards(lambda: self.guard_1, lambda: self.guard_2)()

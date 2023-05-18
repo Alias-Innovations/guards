@@ -15,6 +15,10 @@ class GuardContext:
         self.guards: GuardManager = GuardManager()
         self.closed = False
 
+    @property
+    def running(self):
+        return self.guards.running
+
     def add_guard(self, guard_constructor: Callable[[], Guard]):
         self.guards.add(guard_constructor())
 

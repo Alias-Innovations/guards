@@ -44,6 +44,24 @@ class TestGuardManager:
 
         assert len(self.guard.test_runs) == 1
 
+    def test_running_gets_set_properly(self):
+        class TestGuard(FakeGuard):
+            def run(self, *args, **kwargs):
+                assert self.guard_manager.running
+                raise Exception("To test finally")
+
+        self.guard_manager.add(TestGuard())
+
+        assert not self.guard_manager.running
+
+        try:
+            self.guard_manager.run()
+        except Exception:
+            pass
+        assert not self.guard_manager.running
+
+        assert not self.guard_manager.running
+
     def test_runs_open_guard_multiple_times(self):
         self.guard.permitted = True
         self.guard.closed = False

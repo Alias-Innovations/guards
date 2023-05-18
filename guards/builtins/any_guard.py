@@ -15,9 +15,8 @@ class AnyGuard(GuardContainer):
         if self.short_circuit and guard.permitted and guard.closed:
             self.closed = True
 
-    def run(self, event, *args, **kwargs):
+    def _before_run(self):
         self.permitted = False
-        super().run(event, *args, **kwargs)
 
 
 def any_guard(*guard_constructors: Type[Guard], short_circuit=True):
