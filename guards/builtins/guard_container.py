@@ -45,8 +45,6 @@ class GuardContainer(Guard):
         if self.closed:
             return
 
-        any_open = False
-
         closed_guards = []
         listeners = self.listener_map.get(event, [])
         if len(listeners) == 0:
@@ -61,13 +59,11 @@ class GuardContainer(Guard):
 
             if guard.closed:
                 closed_guards.append(guard)
-            else:
-                any_open = True
 
         for closed_guard in closed_guards:
             listeners.remove(closed_guard)
 
-        self.closed = not any_open
+        self.closed = all([guard.closed for guard in self.guards])
 
     def get_effective_guard(self):
         if self.effective_guard:
