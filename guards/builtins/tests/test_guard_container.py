@@ -101,6 +101,17 @@ class TestGuardContainer:
 
         assert self.guard_container.closed
 
+    def test_stays_open_if_guards_in_current_listener_get_closed(self):
+        self.guard_1.test_next_closed = True
+        self.guard_2.listens_on = [TEST_EVENT_2]
+
+        self.guard_container.add(self.guard_1)
+        self.guard_container.add(self.guard_2)
+
+        self.guard_container.run(RUN_EVENT)
+
+        assert not self.guard_container.closed
+
     def test_returns_last_runned_guard_as_effective_guard(self):
         self.guard_container.add(self.guard_1)
 
