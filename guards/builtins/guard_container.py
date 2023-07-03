@@ -38,9 +38,6 @@ class GuardContainer(Guard):
             guard.run(*args, **kwargs)
             self.effective_guard = guard
 
-    def _before_run(self):
-        pass
-
     def run(self, event, *args, **kwargs):
         if self.closed:
             return
@@ -49,8 +46,6 @@ class GuardContainer(Guard):
         listeners = self.listener_map.get(event, [])
         if len(listeners) == 0:
             return
-
-        self._before_run()
 
         for guard in listeners:
             self._run_guard(guard, event, *args, **kwargs)

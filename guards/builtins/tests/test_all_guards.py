@@ -53,6 +53,22 @@ class TestAllGuards:
 
         assert not all_guards_instance.permitted
 
+    def test_stays_non_permitted_on_later_events(self):
+        TEST_EVENT = "test-event"
+
+        self.guard_1.permitted = False
+        self.guard_1.test_next_closed = False
+
+        self.guard_2.permitted = True
+        self.guard_2.listens_on = [TEST_EVENT]
+        self.guard_2.test_next_closed = False
+
+        any_guard_instance = all_guards(lambda: self.guard_1, lambda: self.guard_2)()
+        any_guard_instance.run(RUN_EVENT)
+        any_guard_instance.run(TEST_EVENT)
+
+        assert not any_guard_instance.permitted
+
     def test_permitted_if_all_permitted(self):
         self.guard_2.permitted = True
         all_guards_instance = all_guards(lambda: self.guard_1, lambda: self.guard_2)()
