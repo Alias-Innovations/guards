@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="guards",
-    version="0.0.1",
+    version="0.0.2",
     author="Alias Innovations",
     author_email="",
     description="A package to ensure restrictions in form of guards in an application",

@@ -64,6 +64,22 @@ class TestAnyGuard:
 
         assert not any_guard_instance.permitted
 
+    def test_stays_permitted_on_later_events(self):
+        TEST_EVENT = "test-event"
+
+        self.guard_1.permitted = True
+        self.guard_1.test_next_closed = False
+
+        self.guard_2.permitted = False
+        self.guard_2.listens_on = [TEST_EVENT]
+        self.guard_2.test_next_closed = False
+
+        any_guard_instance = any_guard(lambda: self.guard_1, lambda: self.guard_2)()
+        any_guard_instance.run(RUN_EVENT)
+        any_guard_instance.run(TEST_EVENT)
+
+        assert any_guard_instance.permitted
+
     def test_short_circuit(self):
         self.guard_1.test_next_closed = True
 
